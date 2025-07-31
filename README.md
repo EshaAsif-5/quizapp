@@ -1,4 +1,4 @@
-# quizapp
+# Quizapp
 A modern, responsive multiple-choice quiz application built using **HTML**, **CSS**, and **JavaScript**.  
 It fetches random questions from the [Open Trivia DB API](https://opentdb.com/) and provides a smooth, interactive experience with real-time feedback, progress tracking, and a final score summary.
 
