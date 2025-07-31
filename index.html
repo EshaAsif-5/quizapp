@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -33,9 +33,12 @@
       width: 100%;
       height: 100vh;
       position: fixed;
+      
+      z-index: 9999;
       top: 0;
       left: 0;
-      z-index: 9999;
+      right: 0;  
+      bottom: 0; 
     }
     .loader {
       border: 6px solid #f3f3f3;
@@ -60,7 +63,6 @@
     /* Start Screen */
     .active-start {
       align-items: center;
-    
     }
     .active-quiz {
       flex-direction: column;
@@ -205,55 +207,15 @@
     }
     .result-details p { font-size: 1.2em; margin-bottom: 10px; }
     .retry-btn { margin-top: 20px; }
-     /* Loader Screen */
-.loader-screen {
-  align-items: center;
-  justify-content: center;
-  background: #fff3cd;
-  flex-direction: column;
-  width: 100%;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 9999;
-}
-
-/* Options Grid for Desktop */
-.options-grid {
-  display: grid;
-  gap: 12px;
-  width: 100%;
-  max-width: 800px;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-}
-
-/* Force 2x2 layout on large screens */
+     
+    /* Responsive */
+    /* 2x2 layout on larger screens */
 @media (min-width: 1024px) {
   .options-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-@media (max-width: 768px) {
-  .active-start {
-    flex-direction: column;
-    justify-content: center; 
-    align-items: flex-start; 
-    text-align: left;
-    padding: 20px;
-    min-height: 100vh; 
-  }
 
-  .start-content, 
-  .start-image {
-    max-width: 100%;
-    height: auto;
-  }
-}
-
-    /* Responsive */
     @media (max-width: 768px) {
       .active-start { flex-direction: column; align-items: flex-start; text-align: left; padding: 20px; }
       .start-content, .start-image { max-width: 100%; height: auto; }
@@ -265,7 +227,7 @@
 </head>
 <body>
   <!-- Start Screen -->
-  <div class="start-screen active-start">
+  <div class="start-screen active-start" style="opacity:1;">
     <div class="start-content">
       <h1>Learn<br><strong>new concepts</strong><br>for each question</h1>
       <p>We help you prepare for exams and quizzes</p>
@@ -341,6 +303,18 @@
     let timer;
     let timeLeft = 60;
 
+    function resetScreens() {
+      startScreen.classList.remove('active-start');
+      quizScreen.classList.remove('active-quiz');
+      loaderScreen.classList.remove('active-loader');
+      resultScreen.classList.remove('active-result');
+
+      startScreen.style.opacity = '0';
+      quizScreen.style.opacity = '0';
+      loaderScreen.style.opacity = '0';
+      resultScreen.style.opacity = '0';
+    }
+
     async function fetchQuestions() {
       showLoader();
       const res = await fetch('https://opentdb.com/api.php?amount=5&category=18&type=multiple');
@@ -355,17 +329,19 @@
           correct: q.correct_answer
         };
       });
-      hideLoader();
+      setTimeout(hideLoader, 500); // show loader
     }
 
     function showLoader() {
-      startScreen.classList.remove('active-start');
+      resetScreens();
       loaderScreen.classList.add('active-loader');
+      loaderScreen.style.opacity = '1';
     }
 
     function hideLoader() {
       loaderScreen.classList.remove('active-loader');
       quizScreen.classList.add('active-quiz');
+      quizScreen.style.opacity = '1';
     }
 
     function startQuiz() {
@@ -380,6 +356,7 @@
     }
 
     function startTimer() {
+      clearInterval(timer);
       timer = setInterval(() => {
         timeLeft--;
         timerEl.textContent = timeLeft;
@@ -452,9 +429,9 @@
     }
 
     retryBtn.addEventListener('click', () => {
-      resultScreen.classList.remove('active-result');
+      resetScreens();
       startScreen.classList.add('active-start');
-      resultScreen.style.opacity = '0';
+      startScreen.style.opacity = '1';
     });
 
     startBtn.addEventListener('click', async () => {
